@@ -156,6 +156,8 @@ Return all Person nodes based on given age:
 ```
 MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
 WITH p, m, toInteger(substring(toString(date()), 0, 4))-toInteger(p.born) AS age
+// or using duration temporal function
+// WITH p, m, duration.between(date(toString(p.born)), date()).years AS age
 WHERE age > 80
 RETURN p.name, p.born, m.title
 ```
