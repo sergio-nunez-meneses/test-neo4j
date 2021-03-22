@@ -151,15 +151,13 @@ WITH p, m
 DETACH DELETE p, m
 ```
 
-Return all Person nodes born between 1970 and 1990, and...:
+Return all Person nodes based on given age:
 
 ```
-// in progress
-// RETURN substring(toString(date()), 0, 4)
-
-MATCH (p:Person)-[]-(m:Movie)
-WHERE p.born > 1970 AND p.born < 1990
-RETURN p.name
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WITH p, m, toInteger(substring(toString(date()), 0, 4))-toInteger(p.born) AS age
+WHERE age > 80
+RETURN p.name, p.born, m.title
 ```
 
 # Advanced Cypher Queries
