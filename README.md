@@ -81,6 +81,23 @@ ON MATCH SET m.lastUpdatedAt = timestamp()
 RETURN m
 ```
 
+Create relationship `:WATCHED` between your node and the movie _Cloud Atlas_:
+
+```
+CREATE (p:Person {name: 'Sergio Nuñez Meneses'})
+WITH p
+MATCH (m:Movie {title: 'Star Wars: Episode IV'})
+CREATE (p)-[w:WATCHED]->(m)
+RETURN type(w)
+```
+
+Return all Person and Movie nodes that are connected by REVIEWED relationship:
+
+```
+MATCH (p:Person)-[:REVIEWED]->(m:Movie)
+return p, m
+```
+
 Return all Person nodes from the movie 'The Da Vinci Code':
 
 ```
@@ -115,6 +132,14 @@ Delete a Person node and its relationships:
 ```
 MATCH (n {name: 'Mark Hamill'})
 DETACH DELETE n
+```
+
+Delete relationship:
+
+```
+MATCH (n)-[r:WATCHED]->()
+WHERE n.name =~ 'Sergio.+'
+DELETE r
 ```
 
 Delete all Person nodes and their relationships based on movie title
