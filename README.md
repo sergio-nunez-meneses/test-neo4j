@@ -151,6 +151,17 @@ WITH p, m
 DETACH DELETE p, m
 ```
 
+Return all Person nodes born between 1970 and 1990, and...:
+
+```
+// in progress
+// RETURN substring(toString(date()), 0, 4)
+
+MATCH (p:Person)-[]-(m:Movie)
+WHERE p.born > 1970 AND p.born < 1990
+RETURN p.name
+```
+
 # Advanced Cypher Queries
 
 Return the director of _Cloud Atlas_ movie:
