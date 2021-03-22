@@ -38,6 +38,49 @@ WHERE m.released > 2010
 RETURN p, a, m
 ```
 
+Return all Person nodes' names and birthdates:
+
+```
+MATCH (p:Person)
+RETURN p.name, p.born
+```
+
+Create new Person node with _name_ property (a more complex version with other nodes and relationships):
+
+```
+CREATE
+(a:Person)-[r:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Person)
+SET
+a += {name: 'Mark Hamill', born: '1951'},
+r += {roles: 'Luke Skywalker'},
+m += {title: 'Star Wars: Episode IV', tagline: 'A New Hope', released: 1977},
+d += {name: 'George Lucas', born: '1944'}
+```
+
+Return movie with title _Cloud Atlas_:
+
+```
+MATCH (m:Movie {title: 'Cloud Atlas'})
+RETURN m
+```
+
+Return all movies released between 2010 and 2015:
+
+```
+MATCH (m:Movie)
+WHERE m.released > 2010 AND m.released < 2015
+RETURN m
+```
+
+Merge clause (like Sequelize method `findOrCreate`):
+
+```
+MERGE (m:Movie {title: 'Greyhound'})
+ON CREATE SET m.released = 2020, m.lastUpdatedAt = timestamp()
+ON MATCH SET m.lastUpdatedAt = timestamp()
+RETURN m
+```
+
 Return all Person nodes from the movie 'The Da Vinci Code':
 
 ```
@@ -65,4 +108,20 @@ Return all Person nodes whose names start with 'N':
 MATCH (p:Person)
 WHERE p.name =~ 'N.+'
 RETURN p
+```
+
+Delete a Person node and its relationships:
+
+```
+MATCH (n {name: 'Mark Hamill'})
+DETACH DELETE n
+```
+
+Delete all Person nodes and their relationships based on movie title
+
+```
+MATCH (p:Person)-[]->(m:Movie)
+WHERE m.title =~ 'Star.+'
+WITH p, m
+DETACH DELETE p, m
 ```
