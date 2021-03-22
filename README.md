@@ -81,7 +81,7 @@ ON MATCH SET m.lastUpdatedAt = timestamp()
 RETURN m
 ```
 
-Create relationship `:WATCHED` between your node and the movie _Cloud Atlas_:
+Create relationship `:WATCHED` between your node and _Cloud Atlas_ movie:
 
 ```
 CREATE (p:Person {name: 'Sergio Nuñez Meneses'})
@@ -98,7 +98,7 @@ MATCH (p:Person)-[:REVIEWED]->(m:Movie)
 return p, m
 ```
 
-Return all Person nodes from the movie 'The Da Vinci Code':
+Return all Person nodes from the movie _The Da Vinci Code_:
 
 ```
 MATCH (p:Person)-[]->(m:Movie)
@@ -149,4 +149,54 @@ MATCH (p:Person)-[]->(m:Movie)
 WHERE m.title =~ 'Star.+'
 WITH p, m
 DETACH DELETE p, m
+```
+
+# Advanced Cypher Queries
+
+Return the director of _Cloud Atlas_ movie:
+
+```
+MATCH (p:Person)-[:DIRECTED]-(m:Movie)
+WHERE m.title = 'Cloud Atlas'
+RETURN p, m
+
+// or...
+// MATCH (p:Person)-[:DIRECTED]-(m:Movie {title: 'Cloud Atlas'})
+// RETURN p, m
+```
+
+Return all Person nodes that co-acted with Tom Hanks in any movie:
+
+```
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)<-[:ACTED_IN]-(tom:Person {name: 'Tom Hanks'})
+RETURN p, m
+```
+
+Return all Person nodes from the movie _Cloud Atlas_:
+
+```
+MATCH (p:Person)-[]-(m:Movie {title: 'Cloud Atlas'})
+// display data as graph
+RETURN p, m
+
+// using the variable relatedTo
+MATCH (p:Person)-[relatedTo]-(m:Movie {title: 'Cloud Atlas'})
+// display data as table
+RETURN p.name, relatedTo.roles, type(relatedTo)
+```
+
+Return all nodes that are `n` hopes away Tom Hanks. `filmIndustry` variable refers to Person and Movie nodes:
+
+```
+// return all Movie nodes
+MATCH (p:Person {name: 'Tom Hanks'})-[*1]-(filmIndustry)
+RETURN DISTINCT p, filmIndustry
+
+// same as
+// MATCH (p:Person {name: 'Tom Hanks'})-[:ACTED_IN]-(m:Movie)
+// RETURN DISTINCT p, m
+
+// return nodes up to 3 hopes away
+MATCH (p:Person {name: 'Tom Hanks'})-[*1..3]-(filmIndustry)
+RETURN DISTINCT p, filmIndustry
 ```
