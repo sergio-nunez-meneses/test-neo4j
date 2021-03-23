@@ -122,8 +122,11 @@ RETURN p
 Return all Person nodes whose names start with 'N':
 
 ```
-MATCH (p:Person)
-WHERE p.name =~ 'N.+'
+MATCH (p:Person) WHERE p.name =~ 'N.+'
+RETURN p
+
+// or
+MATCH (p:Person) WHERE p.name STARTS WITH 'N'
 RETURN p
 ```
 
@@ -138,7 +141,7 @@ Delete relationship:
 
 ```
 MATCH (n)-[r:WATCHED]->()
-WHERE n.name =~ 'Sergio.+'
+WHERE n.name =~ 'Sergio.+' // or n.name STARTS WITH 'Ser'
 DELETE r
 ```
 
@@ -146,7 +149,7 @@ Delete all Person nodes and their relationships based on movie title
 
 ```
 MATCH (p:Person)-[]->(m:Movie)
-WHERE m.title =~ 'Star.+'
+WHERE m.title =~ 'Star.+' // or m.title STARTS WITH 'Star'
 WITH p, m
 DETACH DELETE p, m
 ```
@@ -156,10 +159,23 @@ Return all Person nodes based on given age:
 ```
 MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
 WITH p, m, toInteger(substring(toString(date()), 0, 4))-toInteger(p.born) AS age
-// or using duration temporal function
-// WITH p, m, duration.between(date(toString(p.born)), date()).years AS age
 WHERE age > 80
 RETURN p.name, p.born, m.title
+
+// or using duration temporal function
+MATCH (p:Person)-[:ACTED_IN]->(m:Movie)
+WITH p, m, duration.between(date(toString(p.born)), date()).years AS age
+WHERE age > 80
+RETURN p.name, p.born, m.title
+```
+
+Return all Person nodes based on the number of their relationships:
+
+```
+MATCH (p:Person)-[r]->(m:Movie)
+WITH p, m, COUNT(r) AS numberOfRoles
+WHERE numberOfRoles >= 2
+RETURN p, m
 ```
 
 # Advanced Cypher Queries
