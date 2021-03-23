@@ -1,18 +1,20 @@
 # Scenario
 
-A User publishes an Offer.
+A User _publishes_ an Offer.
 
-A Referent manages an Offer.
+A Referent and a Territorial Referent are _referents for_ an Offer.
 
-A Territorial referent manages an Offer.
+A Company _holds_ an Offer.
 
-A Company holds an Offer.
+An Offer has been _published_ by a User.
 
-An Offer has a Referent or a Territorial referent.
+An Offer _has_ a Referent and a Territorial referent.
 
-An Offer belongs to a Company.
+An Offer _belongs_ to a Company.
 
-# Nodes
+An offer _has categories_ such as Job offer, Real estate offer, Takeover offer
+
+# Labels
 
 - Offer
 
