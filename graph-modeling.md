@@ -1,34 +1,36 @@
 # Scenario
 
-A User _publishes_ an Offer.
+A User <u>_publishes_</u> an Offer.<br>
+An Offer is <u>_published by_</u> a User.
 
-A Referent and a Territorial Referent _are referents for_ an Offer.
+A Contact, or a Territorial Contact, <u>_are referents for_</u> an Offer.<br>
+An Offer <u>_refers to_</u> a Contact, and a Territorial Contact.
 
-A Company _holds_ an Offer.
+A Company <u>_has a Job Offer_</u>.<br>
+A Job Offer <u>_belongs to a Company_</u>.
 
-An Offer is _published by_ a User.
-
-An Offer _has_ a Referent and a Territorial referent.
-
-An Offer _belongs_ to a Company.
-
-An Offer _is type Job_, _type Estate_, or _type Takeover_.<br>
-An Offer is a _Job offer_, an _Estate offer_, or a _Takeover offer_.
-
-A Job, Estate or Takeover offers _belong to_ an Offer.
+An Offer is either a <u>_Job offer_</u>, an <u>_Estate offer_</u>, or a <u>_Takeover offer_</u>.<br>
+A Job, Estate or Takeover offers <u>_belong to an Offer_</u>.
 
 # Labels
 
 - Offer
-
-    - Job offer
-
-    - Real estate offer
-
-    - Takeover offer
-
+    - JobOffer
+    - RealEstateOffer
+    - TakeoverOffer
 - User
+- Contact
+- TerritorialContact
 
-- Referent
+# Relationships
 
-- Territorial referent
+- PUBLISHES
+- PUBLISHED_BY
+- IS_REFERENT_FOR
+- REFERS_TO
+- HAS_JOB_OFFER
+- BELONGS_TO_COMPANY
+- IS_JOB_OFFER
+- IS_ESTATE_OFFER
+- IS_TAKEOVER_OFFER
+- BELONGS_TO_OFFER

@@ -1,3 +1,4 @@
 - [Graph Modeling Guidelines](https://neo4j.com/developer/guide-data-modeling/)
-  
 - A performance comparison between [generic/vague relationship names](https://neo4j.com/blog/neo4j-genericvague-relationship-names/)
+- An article on [categorical variables](https://medium.com/neo4j/graph-data-modeling-categorical-variables-dd8a2845d5e0)
+- An article on [relationships](https://medium.com/neo4j/graph-data-modeling-all-about-relationships-5060e46820ce)
