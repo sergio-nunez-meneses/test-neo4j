@@ -34,3 +34,19 @@ A Job, Estate or Takeover offers <u>_belong to an Offer_</u>.
 - IS_ESTATE_OFFER
 - IS_TAKEOVER_OFFER
 - BELONGS_TO_OFFER
+
+# Example Queries
+
+```
+// more or less like 'DROP TABLE IF EXISTS' in MySQL
+MATCH (n) WHERE (n:User OR n:Offer OR n:EstateOffer)
+DETACH DELETE n
+
+// create nodes with relationships
+CREATE (u:User { name: '' })
+CREATE (o:Offer { title: '' })
+CREATE (jo:JobOffer { } )
+CREATE (eo:EstateOffer { } )
+CREATE (to:TakeoverOffer { } )
+CREATE (u)->[:PUBLISHES]->(o)-[:IS_ESTATE_OFFER]->(eo)
+```
