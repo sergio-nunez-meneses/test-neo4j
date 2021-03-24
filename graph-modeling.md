@@ -47,5 +47,5 @@ CREATE (o:Offer { title: 'New job offer' })
 CREATE (jo:JobOffer { jobDescription: 'It is a really awesome job!'})
 // CREATE (eo:EstateOffer { } )
 // CREATE (to:TakeoverOffer { } )
-CREATE (u)->[:PUBLISHES]->(o)-[:IS_ESTATE_OFFER]->(eo)
+CREATE (u)-[:PUBLISHES]->(o)-[:IS_JOB_OFFER]->(jo)
 ```
