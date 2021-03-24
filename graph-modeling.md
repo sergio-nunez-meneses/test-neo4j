@@ -38,15 +38,14 @@ A Job, Estate or Takeover offers <u>_belong to an Offer_</u>.
 # Example Queries
 
 ```
-// more or less like 'DROP TABLE IF EXISTS' in MySQL
-MATCH (n) WHERE (n:User OR n:Offer OR n:EstateOffer)
-DETACH DELETE n
+// more or less like 'DROP TABLE' in MySQL
+MATCH (n) WHERE (n:User OR n:Offer OR n:JobOffer) DETACH DELETE n
 
 // create nodes with relationships
-CREATE (u:User { name: '' })
-CREATE (o:Offer { title: '' })
-CREATE (jo:JobOffer { } )
-CREATE (eo:EstateOffer { } )
-CREATE (to:TakeoverOffer { } )
+CREATE (u:User { name: 'John Doe' })
+CREATE (o:Offer { title: 'New job offer' })
+CREATE (jo:JobOffer { jobDescription: 'It is a really awesome job!'})
+// CREATE (eo:EstateOffer { } )
+// CREATE (to:TakeoverOffer { } )
 CREATE (u)->[:PUBLISHES]->(o)-[:IS_ESTATE_OFFER]->(eo)
 ```
