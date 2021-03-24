@@ -3,8 +3,8 @@
 A User <u>_publishes_</u> an Offer.<br>
 An Offer is <u>_published by_</u> a User.
 
-A Contact, or a Territorial Contact, <u>_are referents for_</u> an Offer.<br>
-An Offer <u>_refers to_</u> a Contact, and a Territorial Contact.
+A Contact or a Territorial Contact, <u>_are referents for_</u> an Offer.<br>
+An Offer <u>_refers to_</u> a Contact and a Territorial Contact.
 
 A Company <u>_has a Job Offer_</u>.<br>
 A Job Offer <u>_belongs to a Company_</u>.
