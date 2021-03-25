@@ -12,6 +12,8 @@ A Job Offer <u>_belongs to a Company_</u>.
 An Offer is either a <u>_Job offer_</u>, a <u>_Takeover offer_</u>, or an <u>_Estate offer_</u>.<br>
 A Job, Takeover or Estate offers <u>_belong to an Offer_</u>.
 
+A Takeover or Estate offers, or a Company, <u>_are located_</u> somewhere.<br>
+
 # Labels
 
 - User
@@ -22,6 +24,7 @@ A Job, Takeover or Estate offers <u>_belong to an Offer_</u>.
   - JobOffer
   - RealEstateOffer
   - TakeoverOffer
+- Location
 
 # Relationships
 
@@ -35,3 +38,4 @@ A Job, Takeover or Estate offers <u>_belong to an Offer_</u>.
 - IS_ESTATE_OFFER
 - IS_TAKEOVER_OFFER
 - BELONGS_TO_OFFER
+- IS_LOCATED_AT

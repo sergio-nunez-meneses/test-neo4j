@@ -234,21 +234,21 @@ RETURN DISTINCT p, filmIndustry
 
 To launch Cypher shell (assuming Neo4j Community Edition is already installed) run:
 
-```shell
+```
 cd path/to/neo4j/server
 bin/cypher-shell
 ```
 
 Enter your credentials:
 
-```shell
+```
 username: neo4j
 password: *****
 ```
 
 The following response should be displayed:
 
-```shell
+```
 Connected to Neo4j using Bolt protocol version x.x at neo4j://localhost:port as user neo4j.
 Type :help for a list of available commands or :exit to exit the shell.
 Note that Cypher queries must end with a semicolon.
