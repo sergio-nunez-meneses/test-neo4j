@@ -9,18 +9,19 @@ An Offer <u>_refers to_</u> a Contact and a Territorial Contact.
 A Company <u>_has a Job Offer_</u>.<br>
 A Job Offer <u>_belongs to a Company_</u>.
 
-An Offer is either a <u>_Job offer_</u>, an <u>_Estate offer_</u>, or a <u>_Takeover offer_</u>.<br>
-A Job, Estate or Takeover offers <u>_belong to an Offer_</u>.
+An Offer is either a <u>_Job offer_</u>, a <u>_Takeover offer_</u>, or an <u>_Estate offer_</u>.<br>
+A Job, Takeover or Estate offers <u>_belong to an Offer_</u>.
 
 # Labels
 
-- Offer
-    - JobOffer
-    - RealEstateOffer
-    - TakeoverOffer
 - User
 - Contact
 - TerritorialContact
+- Company
+- Offer
+  - JobOffer
+  - RealEstateOffer
+  - TakeoverOffer
 
 # Relationships
 
@@ -34,18 +35,3 @@ A Job, Estate or Takeover offers <u>_belong to an Offer_</u>.
 - IS_ESTATE_OFFER
 - IS_TAKEOVER_OFFER
 - BELONGS_TO_OFFER
-
-# Example Queries
-
-```
-// more or less like 'DROP TABLE' in MySQL
-MATCH (n) WHERE (n:User OR n:Offer OR n:JobOffer) DETACH DELETE n
-
-// create nodes with relationships
-CREATE (u:User { name: 'John Doe' })
-CREATE (o:Offer { title: 'New job offer' })
-CREATE (jo:JobOffer { jobDescription: 'It is a really awesome job!'})
-// CREATE (eo:EstateOffer { } )
-// CREATE (to:TakeoverOffer { } )
-CREATE (u)-[:PUBLISHES]->(o)-[:IS_JOB_OFFER]->(jo)
-```
