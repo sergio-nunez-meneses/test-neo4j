@@ -1,5 +1,6 @@
 // drop nodes
-MATCH (n) DETACH DELETE n;
+MATCH (n)
+DETACH DELETE n;
 // create nodes and set properties
 CREATE (uJohn:User {name: 'John Doe'})
 CREATE (uJenny:User {name: 'Jenny Doe'})
