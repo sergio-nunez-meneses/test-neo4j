@@ -1,6 +1,6 @@
-// empty nodes
+// drop nodes
 MATCH (n) DETACH DELETE n;
-// create nodes with relationships
+// create nodes and set properties
 CREATE (uJohn:User {name: 'John Doe'})
 CREATE (uJenny:User {name: 'Jenny Doe'})
 CREATE (ojo:Offer {title: 'New job offer'})
@@ -10,6 +10,7 @@ CREATE (jo:JobOffer {jobDescription: 'It is a really awesome job!'})
 CREATE (to:TakeoverOffer {description: 'It is a really awesome business!'})
 CREATE (eo:EstateOffer {description: 'It is a really awesome house!'})
 CREATE (c:Company {name: "Jane's Company"})
+// create relationships
 CREATE
   (uJohn)-[:PUBLISHES]->(ojo),
   (uJenny)-[:PUBLISHES]->(oto),
