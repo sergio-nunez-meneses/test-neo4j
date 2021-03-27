@@ -11,13 +11,4 @@ app.listen(port, () => {
 	console.log(`server is running on port ${port}.`);
 });
 
-app.use('/api/person', require('./app/routes/mainRoutes'));
-
-// app.get('/', (req, res) => {
-// 	const result = query.create();
-//
-// 	res.json({
-// 		message: 'connection successful',
-// 		created: result
-// 	});
-// });
+app.use('/api/cat', require('./app/routes/mainRoutes'));
