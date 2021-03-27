@@ -17,12 +17,13 @@ exports.create = ash(async function(req, res, endpoint) {
 
 	const label      = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
 	const session    = driver.session();
-	const personName = req.body.name;
-	const result     = await session.run(
-			`CREATE (a:${label} {name: $name}) RETURN a`,
-			{name: personName},
+
+	// const instance   = await mainRepository.createOne(label, req.body);
+
+	const result = await session.run(
+			`CREATE (a:${label} $properties) RETURN a`,
+			{properties: req.body},
 	);
-	// session.run(`CREATE (a:${label} $props)`, {props: properties})
 
 	const singleRecord = result.records[0];
 	const node         = singleRecord.get(0);
