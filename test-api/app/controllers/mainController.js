@@ -1,5 +1,6 @@
-const ash    = require('express-async-handler');
-const driver = require('../models/index');
+const ash            = require('express-async-handler');
+const driver         = require('../models/index');
+const mainRepository = require('../repositories/mainRepository');
 
 exports.getNodeLabelFromUrl = async function(req) {
 	var data       = [];
@@ -16,16 +17,12 @@ exports.create = ash(async function(req, res) {
 	console.log('function called:', req.body); // just for debugging
 
 	// testing getNodeLabelFromUrl function
-	const url        = req.originalUrl.split('/');
-	const endpoint   = url[2].includes('?') ? url[2].split('?')[0] : url[2];
-	const label      = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
+	const url      = req.originalUrl.split('/');
+	const endpoint = url[2].includes('?') ? url[2].split('?')[0] : url[2];
+	const label    = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
 
-	const session    = driver.session();
-	const result = await session.run(
-			`CREATE (a:${label} $properties) RETURN a`,
-			{properties: req.body},
-	);
-	// const instance   = await mainRepository.createOne(label, req.body);
+	const session = driver.session();
+	const result   = await mainRepository.createOne(session, label, req.body);
 
 	const singleRecord = result.records[0];
 	const node         = singleRecord.get(0);
