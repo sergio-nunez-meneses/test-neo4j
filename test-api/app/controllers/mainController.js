@@ -22,14 +22,19 @@ exports.create = ash(async function(req, res) {
 	const label    = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
 
 	const session = driver.session();
-	const result   = await mainRepository.createOne(session, label, req.body);
+	const result  = await mainRepository.createOne(session, label, req.body);
 
-	const singleRecord = result.records[0];
-	const node         = singleRecord.get(0);
+	if (result.records.length === 0) {
+		return res.status(500).send({
+			error: `An error occurred while creating ${label} node.`
+		});
+	}
+
+	console.log('result:', result.records[0].get(0)); // just for debugging
 
 	await session.close();
 
-	console.log('result:', node); // just for debugging
-
-	res.json({message: 'node ' + node.properties.name + ' created successfully!'});
+	res.status(200).send({
+		message: `node ${label} created successfully!`
+	});
 });
