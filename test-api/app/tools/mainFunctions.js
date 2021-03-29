@@ -6,17 +6,17 @@ exports.getNodeLabelFromUrl = async function(originalUrl) {
 	return label;
 };
 
-exports.convertToLiteralMap = async function(reqKeys) {
-	var literalMaps = [];
+exports.toLiteralMapFind = async function(reqKeys) {
+	var literalMap = [];
 
 	for (var key of Object.keys(reqKeys)) {
-		literalMaps.push([key, `$${key}`]);
+		literalMap.push([key, `$${key}`]);
 	}
 
-	return JSON.stringify(Object.fromEntries(literalMaps)).replace(/['"]+/g, '');
+	return JSON.stringify(Object.fromEntries(literalMap)).replace(/['"]+/g, '');
 };
 
-exports.convertToLiteralMapUpdate = async function(propKeys) {
+exports.toLiteralMapSet = async function(propKeys) {
 	return `n += ${JSON.stringify(propKeys).replace(/"([^"]+)":/g, '$1:')}`;
 };
 

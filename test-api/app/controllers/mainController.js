@@ -8,12 +8,7 @@ exports.createNode = ash(async function(req, res) {
 
 	const label   = await tools.getNodeLabelFromUrl(req.originalUrl);
 	const session = driver.session();
-
-	// if (req.body.hasOwnProperty('id')) {
-	// 	req.body.id = Number(req.body.id);
-	// }
-
-	const node = await mainRepository.createOne(session, label, req.body);
+	const node    = await mainRepository.createOne(session, label, req.body);
 
 	if (node.records.length === 0) {
 		return res.status(500).send({
@@ -37,7 +32,7 @@ exports.findAllNodes = ash(async function(req, res) {
 
 	// build literal map for cypher's where clause
 	if (Object.keys(req.query).length > 0) {
-		req.query.literalMaps = await tools.convertToLiteralMap(req.query);
+		req.query.where = await tools.toLiteralMapFind(req.query);
 	}
 
 	const session = driver.session();
@@ -51,7 +46,7 @@ exports.findAllNodes = ash(async function(req, res) {
 	}
 
 	for (var record of result.records) {
-		// console.log('nodes:', record.get(0)); // just for debugging
+		console.log('nodes:', record.get(0)); // just for debugging
 
 		nodes.push(record.get(0));
 	}
@@ -66,11 +61,10 @@ exports.findAllNodes = ash(async function(req, res) {
 exports.findOneNode = ash(async function(req, res) {
 	console.log('function called:', req.params); // just for debugging
 
-	const label            = await tools.getNodeLabelFromUrl(req.originalUrl);
-	req.params.literalMaps = await tools.convertToLiteralMap(req.params); // build literal map for cypher's where clause
-
-	const session = driver.session();
-	const node    = await mainRepository.find(session, label, req.params);
+	const label      = await tools.getNodeLabelFromUrl(req.originalUrl);
+	req.params.where = await tools.toLiteralMapFind(req.params); // build literal map for cypher's where clause
+	const session    = driver.session();
+	const node       = await mainRepository.find(session, label, req.params);
 
 	if (node.records.length === 0) {
 		return res.status(500).send({
@@ -88,13 +82,12 @@ exports.findOneNode = ash(async function(req, res) {
 exports.updateNode = ash(async function(req, res) {
 	console.log('function called:', req.params, req.body); // just for debugging
 
-	const label          = await tools.getNodeLabelFromUrl(req.originalUrl);
-	req.body.paramsMaps  = await tools.convertToLiteralMapUpdate(req.body); // build literal map for cypher's where clause
-	req.body.literalMaps = await tools.convertToLiteralMap(req.params);
-	req.body.id          = req.params;
-
-	const session = driver.session();
-	const node    = await mainRepository.updateOne(session, label, req.body);
+	const label    = await tools.getNodeLabelFromUrl(req.originalUrl);
+	req.body.set   = await tools.toLiteralMapSet(req.body); // build literal map for cypher's set clause
+	req.body.where = await tools.toLiteralMapFind(req.params); // build literal map for cypher's where clause
+	req.body.id    = req.params;
+	const session  = driver.session();
+	const node     = await mainRepository.updateOne(session, label, req.body);
 
 	if (node.records.length === 0) {
 		return res.status(500).send({
@@ -112,8 +105,7 @@ exports.updateNode = ash(async function(req, res) {
 });
 
 exports.deleteAllNodes = ash(async function(req, res) {
-	const label = await tools.getNodeLabelFromUrl(req.originalUrl);
-
+	const label   = await tools.getNodeLabelFromUrl(req.originalUrl);
 	const session = driver.session();
 	const node    = await mainRepository.delete(session, label);
 
@@ -135,11 +127,10 @@ exports.deleteAllNodes = ash(async function(req, res) {
 exports.deleteNode = ash(async function(req, res) {
 	console.log('function called:', req.params); // just for debugging
 
-	const label            = await tools.getNodeLabelFromUrl(req.originalUrl);
-	req.params.literalMaps = await tools.convertToLiteralMap(req.params); // build literal map for cypher's where clause
-
-	const session = driver.session();
-	const node    = await mainRepository.delete(session, label, req.params);
+	const label      = await tools.getNodeLabelFromUrl(req.originalUrl);
+	req.params.where = await tools.toLiteralMapFind(req.params); // build literal map for cypher's where clause
+	const session    = driver.session();
+	const node       = await mainRepository.delete(session, label, req.params);
 
 	if (node.records.length === 0) {
 		return res.status(500).send({

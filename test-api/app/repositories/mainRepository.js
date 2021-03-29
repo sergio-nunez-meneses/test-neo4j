@@ -8,11 +8,12 @@ exports.createOne = ash(async function(session, label, properties) {
 	return await session.run(cypher, props);
 });
 
+// arguments: session, label, properties
 exports.find = ash(async function() {
-	if (typeof arguments[2] === 'object' && arguments[2].hasOwnProperty('literalMaps')) {
-		const properties = arguments[2].literalMaps;
-		delete arguments[2].literalMaps;
-		const cypher = `MATCH (n:${arguments[1]} ${properties}) RETURN n`;
+	if (arguments[2].hasOwnProperty('where')) {
+		const where = arguments[2].where;
+		delete arguments[2].where;
+		const cypher = `MATCH (n:${arguments[1]} ${where}) RETURN n`;
 
 		return await arguments[0].run(cypher, arguments[2]);
 	}
@@ -22,16 +23,16 @@ exports.find = ash(async function() {
 });
 
 exports.updateOne = ash(async function(session, label, properties) {
-	const cypher = `MATCH (n:${arguments[1]} ${properties.literalMaps}) SET ${properties.paramsMaps} RETURN n`;
+	const cypher = `MATCH (n:${arguments[1]} ${properties.where}) SET ${properties.set} RETURN n`;
 
 	return await session.run(cypher, properties.id);
 });
 
 exports.delete = ash(async function() {
 	if (arguments.length > 2) {
-		const properties = arguments[2].literalMaps;
-		delete arguments[2].literalMaps;
-		const cypher = `MATCH (n:${arguments[1]} ${properties}) DETACH DELETE n RETURN n`;
+		const where = arguments[2].where;
+		delete arguments[2].where;
+		const cypher = `MATCH (n:${arguments[1]} ${where}) DETACH DELETE n RETURN n`;
 
 		return await arguments[0].run(cypher, arguments[2]);
 	} else {
