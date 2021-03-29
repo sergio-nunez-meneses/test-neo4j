@@ -28,10 +28,10 @@ exports.updateOne = ash(async function(session, label, properties) {
 });
 
 exports.delete = ash(async function() {
-	if (arguments.length > 1) {
+	if (arguments.length > 2) {
 		const properties = arguments[2].literalMaps;
 		delete arguments[2].literalMaps;
-		const cypher = `MATCH (n:${arguments[1]} ${properties}) DETACH DELETE n`;
+		const cypher = `MATCH (n:${arguments[1]} ${properties}) DETACH DELETE n RETURN n`;
 
 		return await arguments[0].run(cypher, arguments[2]);
 	}

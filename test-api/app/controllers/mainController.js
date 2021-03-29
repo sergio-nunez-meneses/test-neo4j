@@ -9,9 +9,9 @@ exports.createNode = ash(async function(req, res) {
 	const label   = await tools.getNodeLabelFromUrl(req.originalUrl);
 	const session = driver.session();
 
-	if (req.body.hasOwnProperty('id')) {
-		req.body.id = Number(req.body.id);
-	}
+	// if (req.body.hasOwnProperty('id')) {
+	// 	req.body.id = Number(req.body.id);
+	// }
 
 	const node = await mainRepository.createOne(session, label, req.body);
 
@@ -120,7 +120,7 @@ exports.deleteNode = ash(async function(req, res) {
 	const session = driver.session();
 	const node    = await mainRepository.delete(session, label, req.params);
 
-	if (node.records.length > 0) {
+	if (node.records.length === 0) {
 		return res.status(500).send({
 			error: `Couldn't delete ${label} node with id=${req.params.id}.`,
 		});
