@@ -10,4 +10,4 @@ app.listen(port, function() {
 	console.log(`server is running on port ${port}.`);
 });
 
-app.use('/api/cat', require('./app/routes/mainRoutes'));
+app.use('/api/person', require('./app/routes/mainRoutes'));

@@ -34,9 +34,9 @@ exports.delete = ash(async function() {
 		const cypher = `MATCH (n:${arguments[1]} ${properties}) DETACH DELETE n RETURN n`;
 
 		return await arguments[0].run(cypher, arguments[2]);
-	}
+	} else {
+		const cypher = `MATCH (n:${arguments[1]}) DETACH DELETE n RETURN n`;
 
-	// const cypher = `MATCH (n:${arguments[1]}) DETACH DELETE n`;
-	//
-	// return await session.run(cypher);
+		return await arguments[0].run(cypher);
+	}
 });
