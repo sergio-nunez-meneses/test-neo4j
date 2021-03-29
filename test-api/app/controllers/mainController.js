@@ -43,9 +43,20 @@ exports.findAllNodes = ash(async function(req, res) {
 	console.log('function called:', req.query); // just for debugging
 
 	// testing getNodeLabelFromUrl function
-	const url      = req.originalUrl.split('/');
-	const endpoint = url[2].includes('?') ? url[2].split('?')[0] : url[2];
-	const label    = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
+	const url       = req.originalUrl.split('/');
+	const endpoint  = url[2].includes('?') ? url[2].split('?')[0] : url[2];
+	const label     = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
+	var keys        = Object.keys(req.query);
+	var literalMaps = [];
+
+	// build literal maps for cypher query
+	if (keys.length > 0) {
+		for (var key of keys) {
+			literalMaps.push([key, `$${key}`]);
+		}
+
+		req.query['literalMaps'] = JSON.stringify(Object.fromEntries(literalMaps)).replace(/['"]+/g, '');
+	}
 
 	const session = driver.session();
 	const result  = await mainRepository.find(session, label, req.query);
