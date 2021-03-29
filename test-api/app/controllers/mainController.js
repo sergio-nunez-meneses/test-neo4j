@@ -63,7 +63,7 @@ exports.findAllNodes = ash(async function(req, res) {
 	res.status(200).send(nodes);
 });
 
-exports.findOneNode = async function(req, res) {
+exports.findOneNode = ash(async function(req, res) {
 	console.log('function called:', req.params); // just for debugging
 
 	const label            = await tools.getNodeLabelFromUrl(req.originalUrl);
@@ -83,15 +83,15 @@ exports.findOneNode = async function(req, res) {
 	await session.close();
 
 	res.status(200).send(node.records[0].get(0));
-};
+});
 
-exports.updateNode = async function(req, res) {
+exports.updateNode = ash(async function(req, res) {
 	console.log('function called:', req.params, req.body); // just for debugging
 
 	const label          = await tools.getNodeLabelFromUrl(req.originalUrl);
 	req.body.paramsMaps  = await tools.convertToLiteralMapUpdate(req.body); // build literal map for cypher's where clause
 	req.body.literalMaps = await tools.convertToLiteralMap(req.params);
-	req.body.id = req.params;
+	req.body.id          = req.params;
 
 	const session = driver.session();
 	const node    = await mainRepository.updateOne(session, label, req.body);
@@ -109,4 +109,28 @@ exports.updateNode = async function(req, res) {
 	res.status(200).send({
 		message: `${label} node updated successfully!`,
 	});
-};
+});
+
+exports.deleteNode = ash(async function(req, res) {
+	console.log('function called:', req.params); // just for debugging
+
+	const label            = await tools.getNodeLabelFromUrl(req.originalUrl);
+	req.params.literalMaps = await tools.convertToLiteralMap(req.params); // build literal map for cypher's where clause
+
+	const session = driver.session();
+	const node    = await mainRepository.delete(session, label, req.params);
+
+	if (node.records.length > 0) {
+		return res.status(500).send({
+			error: `Couldn't delete ${label} node with id=${req.params.id}.`,
+		});
+	}
+
+	console.log('result:', node); // just for debugging
+
+	await session.close();
+
+	res.status(200).send({
+		message: `${label} node deleted successfully!`
+	});
+});

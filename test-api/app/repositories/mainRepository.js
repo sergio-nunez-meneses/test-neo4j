@@ -26,3 +26,17 @@ exports.updateOne = ash(async function(session, label, properties) {
 
 	return await session.run(cypher, properties.id);
 });
+
+exports.delete = ash(async function() {
+	if (arguments.length > 1) {
+		const properties = arguments[2].literalMaps;
+		delete arguments[2].literalMaps;
+		const cypher = `MATCH (n:${arguments[1]} ${properties}) DETACH DELETE n`;
+
+		return await arguments[0].run(cypher, arguments[2]);
+	}
+
+	// const cypher = `MATCH (n:${arguments[1]}) DETACH DELETE n`;
+	//
+	// return await session.run(cypher);
+});
