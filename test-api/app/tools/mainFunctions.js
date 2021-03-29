@@ -7,14 +7,11 @@ exports.getNodeLabelFromUrl = async function(originalUrl) {
 }
 
 exports.convertToLiteralMap = async function(reqKeys) {
-	const keys      = Object.keys(reqKeys);
 	var literalMaps = [];
 
-	if (keys.length > 0) {
-		for (var key of keys) {
-			literalMaps.push([key, `$${key}`]);
-		}
-
-		return JSON.stringify(Object.fromEntries(literalMaps)).replace(/['"]+/g, '');
+	for (var key of Object.keys(reqKeys)) {
+		literalMaps.push([key, `$${key}`]);
 	}
+
+	return JSON.stringify(Object.fromEntries(literalMaps)).replace(/['"]+/g, '');
 }

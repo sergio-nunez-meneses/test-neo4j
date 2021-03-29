@@ -6,12 +6,13 @@ const tools          = require('../tools/mainFunctions');
 exports.createNode = ash(async function(req, res) {
 	console.log('function called:', req.body); // just for debugging
 
-	// testing getNodeLabelFromUrl function
-	const url      = req.originalUrl.split('/');
-	const endpoint = url[2].includes('?') ? url[2].split('?')[0] : url[2];
-	const label    = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
-
+	const label   = await tools.getNodeLabelFromUrl(req.originalUrl);
 	const session = driver.session();
+
+	if (req.body.hasOwnProperty('id')) {
+		req.body.id = Number(req.body.id);
+	}
+
 	const node    = await mainRepository.createOne(session, label, req.body);
 
 	if (node.records.length === 0) {
@@ -32,20 +33,11 @@ exports.createNode = ash(async function(req, res) {
 exports.findAllNodes = ash(async function(req, res) {
 	console.log('function called:', req.query); // just for debugging
 
-	// testing getNodeLabelFromUrl function
-	const url       = req.originalUrl.split('/');
-	const endpoint  = url[2].includes('?') ? url[2].split('?')[0] : url[2];
-	const label     = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
-	var keys        = Object.keys(req.query);
-	var literalMaps = [];
+	const label = await tools.getNodeLabelFromUrl(req.originalUrl);
 
-	// build literal maps for cypher query
-	if (keys.length > 0) {
-		for (var key of keys) {
-			literalMaps.push([key, `$${key}`]);
-		}
-
-		req.query['literalMaps'] = JSON.stringify(Object.fromEntries(literalMaps)).replace(/['"]+/g, '');
+	// build literal map for cypher's where clause
+	if (Object.keys(req.query).length > 0) {
+		req.query.literalMaps = await tools.convertToLiteralMap(req.query);
 	}
 
 	const session = driver.session();
@@ -73,7 +65,7 @@ exports.findOneNode = async function(req, res) {
 	console.log('function called:', req.params); // just for debugging
 
 	const label            = await tools.getNodeLabelFromUrl(req.originalUrl);
-	req.params.literalMaps = await tools.convertToLiteralMap(req.params);
+	req.params.literalMaps = await tools.convertToLiteralMap(req.params); // build literal map for cypher's where clause
 
 	const session = driver.session();
 	const result  = await mainRepository.find(session, label, req.params);
