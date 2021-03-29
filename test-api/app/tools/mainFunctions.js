@@ -4,7 +4,7 @@ exports.getNodeLabelFromUrl = async function(originalUrl) {
 	const label    = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
 
 	return label;
-}
+};
 
 exports.convertToLiteralMap = async function(reqKeys) {
 	var literalMaps = [];
@@ -14,4 +14,9 @@ exports.convertToLiteralMap = async function(reqKeys) {
 	}
 
 	return JSON.stringify(Object.fromEntries(literalMaps)).replace(/['"]+/g, '');
-}
+};
+
+exports.convertToLiteralMapUpdate = async function(propKeys) {
+	return `n += ${JSON.stringify(propKeys).replace(/"([^"]+)":/g, '$1:')}`;
+};
+

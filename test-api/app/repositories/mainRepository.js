@@ -20,3 +20,9 @@ exports.find = ash(async function() {
 		return await arguments[0].run(`MATCH (n:${arguments[1]}) RETURN n`);
 	}
 });
+
+exports.updateOne = ash(async function(session, label, properties) {
+	const cypher = `MATCH (n:${arguments[1]} ${properties.literalMaps}) SET ${properties.paramsMaps} RETURN n`;
+
+	return await session.run(cypher, properties.id);
+});
