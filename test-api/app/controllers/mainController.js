@@ -1,17 +1,7 @@
 const ash            = require('express-async-handler');
 const driver         = require('../models/index');
 const mainRepository = require('../repositories/mainRepository');
-
-exports.getNodeLabelFromUrl = async function(req) {
-	var data       = [];
-	const url      = req.originalUrl.split('/');
-	const endpoint = url[2].includes('?') ? url[2].split('?')[0] : url[2];
-	const label    = endpoint.charAt(0).toUpperCase() + endpoint.slice(1);
-
-	data.push(endpoint, label);
-
-	return data;
-}
+const tools          = require('../tools/mainFunctions');
 
 exports.createNode = ash(async function(req, res) {
 	console.log('function called:', req.body); // just for debugging
@@ -78,3 +68,23 @@ exports.findAllNodes = ash(async function(req, res) {
 
 	res.status(200).send(nodes);
 });
+
+exports.findOneNode = async function(req, res) {
+	console.log('function called:', req.params); // just for debugging
+
+	const label            = await tools.getNodeLabelFromUrl(req.originalUrl);
+	req.params.literalMaps = await tools.convertToLiteralMap(req.params);
+
+	const session = driver.session();
+	const result  = await mainRepository.find(session, label, req.params);
+
+	if (result.records.length === 0) {
+		return res.status(500).send({
+			error: `Error retrieving ${label} node with id=${req.params.id}. Maybe ${label} node was not found.`,
+		});
+	}
+
+	await session.close();
+
+	res.status(200).send(result.records[0].get(0));
+};
