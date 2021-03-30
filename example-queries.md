@@ -256,7 +256,7 @@ MATCH (o:Offer {
   propertyName1: propertyValue1,
   propertyName2: propertyValue2
   // and so on
-})-[]->(n)->[:IS_LOCATED]->(lo:Location)
+})-[]->(n)-[:IS_LOCATED]->(lo:Location)
 RETURN o, n, lo
 ```
 
@@ -298,7 +298,7 @@ RETURN o, to, lo
 Update any type of offer, e.g. job offer:
 
 ```cypher
-MATCH (o:Offer {id: 1})->[]->(n)
+MATCH (o:Offer {id: 1})-[]->(n)
 SET n += {
   townHall: string,
   startingDate: string,
@@ -321,6 +321,6 @@ Delete any type of offer, e.g. job offer:
 
 ```cypher
 // check hop numbers
-MATCH (o:Offer {id: 1})->[1..5]->(offerDetails)
+MATCH (o:Offer {id: 1})-[*1..5]->(offerDetails)
 DETACH DELETE o, offerDetails
 ```
