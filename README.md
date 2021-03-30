@@ -214,7 +214,7 @@ MATCH (p:Person)-[relatedTo]-(m:Movie {title: 'Cloud Atlas'})
 RETURN p.name, relatedTo.roles, type(relatedTo)
 ```
 
-Return all nodes that are `n` hopes away Tom Hanks. `filmIndustry` variable refers to Person and Movie nodes:
+Return all nodes that are `n` hops away Tom Hanks. `filmIndustry` variable refers to Person and Movie nodes:
 
 ```cypher
 // return all Movie nodes
@@ -225,7 +225,7 @@ RETURN DISTINCT p, filmIndustry
 // MATCH (p:Person {name: 'Tom Hanks'})-[:ACTED_IN]-(m:Movie)
 // RETURN DISTINCT p, m
 
-// return nodes up to 3 hopes away
+// return nodes up to 3 hops away
 MATCH (p:Person {name: 'Tom Hanks'})-[*1..3]-(filmIndustry)
 RETURN DISTINCT p, filmIndustry
 ```
