@@ -16,7 +16,7 @@ MATCH (c:Contact {
   firstname: string
 })
 MATCH (tc:TerritorialContact {
-  firstname: string,
+  firstname: string
 })
 // create offer
 CREATE (o:Offer {
@@ -71,7 +71,7 @@ MATCH (c:Contact {
   firstname: string
 })
 MATCH (tc:TerritorialContact {
-  firstname: string,
+  firstname: string
 })
 // a job offer belongs to a company
 MATCH (co:Company {
@@ -116,7 +116,7 @@ MATCH (c:Contact {
   firstname: string
 })
 MATCH (tc:TerritorialContact {
-firstname: string,
+firstname: string
 })
 CREATE (o:Offer {
   id: integer,
@@ -254,7 +254,7 @@ Find all offers by any property:
 ```cypher
 MATCH (o:Offer {
   propertyName1: propertyValue1,
-  propertyName2: propertyValue2,
+  propertyName2: propertyValue2
   // and so on
 })-[]->(n)->[:IS_LOCATED]->(lo:Location)
 RETURN o, n, lo
@@ -263,7 +263,7 @@ RETURN o, n, lo
 ```cypher
 MATCH (o:Offer)-[]->(n {
   propertyName1: propertyValue1,
-  propertyName2: propertyValue2,
+  propertyName2: propertyValue2
   // and so on
 })-[:IS_LOCATED]->(lo:Location)
 RETURN o, n, lo
