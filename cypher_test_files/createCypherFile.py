@@ -208,7 +208,7 @@ create_relationships = []
 
 # create file content
 for i in range(0, len(offer_titles)):
-    # initialize node and relationship strings
+    # initialize node and relationship variables
     u_cypher = c_cypher = tc_cypher = co_cypher = to_cypher = jo_cypher = eo_cypher = ''
     u_rel_o = o_rel_ctc = o_rel_to = o_rel_jo = o_rel_eo = to_rel_lo = eo_rel_lo = jo_rel_co = co_rel_lo = ''
 
@@ -260,10 +260,10 @@ for i in range(0, len(offer_titles)):
         co_name = 'name: "' + company_name + '"}'
 
         # create user, contact, territorial contact, and company nodes
-        u_cypher = 'CREATE (' + u_node + u_id + u_username + ')\n'
-        c_cypher = 'CREATE (' + c_node + c_id + c_fullname + ')\n'
-        tc_cypher = 'CREATE (' + tc_node + tc_id + tc_fullname + tc_link + ')\n'
-        co_cypher = 'CREATE (' + co_node + co_id + co_name + ')\n'
+        u_cypher += 'CREATE (' + u_node + u_id + u_username + ')\n'
+        c_cypher += 'CREATE (' + c_node + c_id + c_fullname + ')\n'
+        tc_cypher += 'CREATE (' + tc_node + tc_id + tc_fullname + tc_link + ')\n'
+        co_cypher += 'CREATE (' + co_node + co_id + co_name + ')\n'
 
     # set offer properties
     o_node = 'o' + str_id + ':Offer'
@@ -320,7 +320,7 @@ for i in range(0, len(offer_titles)):
         create_relationships.remove('')
 
 # format file content
-drop_nodes = 'MATCH (n) DETACH DELETE n;\n'
+drop_nodes = 'MATCH (n)\nDETACH DELETE n;\n'
 nodes = drop_nodes + ''.join(create_nodes)
 relationships = 'CREATE ' + '   '.join(create_relationships)[:-2] + ';'
 
@@ -333,7 +333,7 @@ if not os.path.exists(path):
 os.chdir(path)
 
 # save cypher file
-filename = str(datetime.today().strftime('%Y-%m-%d-%H:%M:%S')) + '_' + str(uuid.uuid4()).replace('-', '') + '.cypher'
+filename = str(datetime.today().strftime('%Y%m%dT%H%M%S')) + '_' + str(uuid.uuid4()).replace('-', '') + '.cypher'
 f = open(filename, 'w+')
 f.write(nodes)
 f.write(relationships)
