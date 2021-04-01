@@ -217,7 +217,23 @@ RETURN co, lo
 
 ## GET
 
-Find all offers:
+```cypher
+// return all nodes up to 2 hops away from Company, that have the indicated (<-) relationship
+MATCH (co:Company)<-[*1..2]-(n) RETURN co, n
+
+// return all nodes up to 2 hops away from Company, having a bi-directional relationship
+MATCH (co:Company)-[*1..2]-(n) RETURN co, n
+
+// return all nodes up to 1 hop away from Offer, having a bi-directional relationship
+MATCH (o:Offer)-[*1]-(n) RETURN o, n
+
+// return all nodes up to 1 hop away from Offer, if their publication ending date is lower than a given date
+MATCH (o:Offer)-[*1]-(n)
+WHERE date(o.endPublished) < date('2022-01-03')
+RETURN o, n
+```
+
+Find all offers and directly related nodes given the relationship direction:
 
 ```cypher
 // add Location, Images, Company and Company's Location nodes
@@ -269,13 +285,6 @@ MATCH (o:Offer)-[]->(n {
 RETURN o, n, lo
 ```
 
-Find all type of offers by location (this will be a very more complex query though):
-
-```cypher
-MATCH (lo:Location {city: 'Doeland'})<-[:IS_LOCATED]-(n)<-[]-(o:Offer)
-RETURN o, n, lo
-```
-
 Find all job offers by company:
 
 ```cypher
@@ -291,6 +300,28 @@ Find offer by id:
 // add Image node
 MATCH (o:Offer {id: 1})-[]->(n)-[:IS_LOCATED]->(lo:Location)
 RETURN o, to, lo
+```
+
+Find all type of offers by location, e.g by city, and...
+
+```cypher
+MATCH (lo:Location)<-[*1..2]-(n)
+WHERE lo.city =~ '(?i).*loire.*'
+WITH lo.address + ' ' + lo.zipcode + ' ' + toUpper(lo.city) AS targetAddress
+```
+
+...use address and zip code to calculate distance between offers (work in progress):
+
+```cypher
+// simple test
+// returns coordinates from a textual address
+CALL apoc.spatial.geocodeOnce('3 Rue François Mitterrand 58000 NEVERS FRANCE')
+YIELD location AS pub
+CALL apoc.spatial.geocodeOnce('15 Rue Saint-Etienne 58000 NEVERS FRANCE')
+YIELD location AS bar
+WITH point({longitude: pub.longitude, latitude: pub.latitude}) AS pubPoint, point({longitude: bar.longitude, latitude: bar.latitude}) AS barPoint
+// returns geodesic distance in meters
+RETURN round(distance(pubPoint, barPoint)) AS distance
 ```
 
 ## PUT
