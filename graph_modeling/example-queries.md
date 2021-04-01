@@ -305,8 +305,10 @@ RETURN o, to, lo
 Find all type of offers by the distance between their location and a given point:
 
 ```cypher
+// point() returns a 2D point in a CRS corresponding to the given values (WGS-84 or Cartesian)
 WITH point({longitude: -84.27831, latitude: -73.81575}) AS startingPoint
 MATCH (lo:Location)
+// distance() returns geodesic distance in meters
 WITH lo, round(distance(startingPoint, point({longitude: lo.longitude, latitude: lo.latitude}))) as distance
 WHERE distance > 1000
 // RETURN lo.address, distance
@@ -320,7 +322,6 @@ Find all type of offers by the distance between their location and a given addre
 CALL apoc.spatial.geocodeOnce('# address zipcode CITY COUNTRY')
 YIELD location AS job
 MATCH (lo:Location)
-// distance() returns geodesic distance in meters
 WITH lo, round(distance(point({longitude: job.longitude, latitude: job.latitude}), point({longitude: lo.longitude, latitude: lo.latitude}))) AS distance
 WHERE distance < 4000
 RETURN (lo)-[*1..3]-()
