@@ -302,18 +302,19 @@ MATCH (o:Offer {id: 1})-[]->(n)-[:IS_LOCATED]->(lo:Location)
 RETURN o, to, lo
 ```
 
-Find all type of offers by location, e.g by city, and...
+Find all type of offers by the distance between their location and a given point:
 
 ```cypher
-MATCH (lo:Location)<-[*1..2]-(n)
-WHERE lo.city =~ '(?i).*loire.*'
-WITH lo.address + ' ' + lo.zipcode + ' ' + toUpper(lo.city) AS targetAddress
+MATCH (lo:Location)
+WITH lo, point({longitude: 3.154542989163053, latitude: 46.98430830489578}) AS startingPoint, point({longitude: lo.longitude, latitude: lo.latitude}) AS offerPoint
+WITH lo, round(distance(startingPoint, offerPoint)) as distance
+WHERE distance < 500
+RETURN lo.address, distance
 ```
 
-...use address and zip code to calculate distance between offers (work in progress):
+Find all type of offers by the distance between their location and a given address:
 
 ```cypher
-// simple test
 // returns coordinates from a textual address
 CALL apoc.spatial.geocodeOnce('3 Rue François Mitterrand 58000 NEVERS FRANCE')
 YIELD location AS pub
