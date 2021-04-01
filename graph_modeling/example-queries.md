@@ -229,7 +229,7 @@ MATCH (o:Offer)-[*1]-(n) RETURN o, n
 
 // return all nodes up to 1 hop away from Offer, if their publication ending date is lower than a given date
 MATCH (o:Offer)-[*1]-(n)
-WHERE date(o.endPublished) < date('2022-01-03')
+WHERE date(o.endPublished) < date('YYYY-MM-dd')
 RETURN o, n
 ```
 
@@ -305,24 +305,25 @@ RETURN o, to, lo
 Find all type of offers by the distance between their location and a given point:
 
 ```cypher
+WITH point({longitude: -84.27831, latitude: -73.81575}) AS startingPoint
 MATCH (lo:Location)
-WITH lo, point({longitude: 3.154542989163053, latitude: 46.98430830489578}) AS startingPoint, point({longitude: lo.longitude, latitude: lo.latitude}) AS offerPoint
-WITH lo, round(distance(startingPoint, offerPoint)) as distance
-WHERE distance < 500
-RETURN lo.address, distance
+WITH lo, round(distance(startingPoint, point({longitude: lo.longitude, latitude: lo.latitude}))) as distance
+WHERE distance > 1000
+// RETURN lo.address, distance
+RETURN (lo)<-[*1..3]-()
 ```
 
 Find all type of offers by the distance between their location and a given address:
 
 ```cypher
-// returns coordinates from a textual address
-CALL apoc.spatial.geocodeOnce('3 Rue François Mitterrand 58000 NEVERS FRANCE')
-YIELD location AS pub
-CALL apoc.spatial.geocodeOnce('15 Rue Saint-Etienne 58000 NEVERS FRANCE')
-YIELD location AS bar
-WITH point({longitude: pub.longitude, latitude: pub.latitude}) AS pubPoint, point({longitude: bar.longitude, latitude: bar.latitude}) AS barPoint
-// returns geodesic distance in meters
-RETURN round(distance(pubPoint, barPoint)) AS distance
+// apoc.spatial.geocodeOnce() returns coordinates from a textual address
+CALL apoc.spatial.geocodeOnce('# address zipcode CITY COUNTRY')
+YIELD location AS job
+MATCH (lo:Location)
+// distance() returns geodesic distance in meters
+WITH lo, round(distance(point({longitude: job.longitude, latitude: job.latitude}), point({longitude: lo.longitude, latitude: lo.latitude}))) AS distance
+WHERE distance < 4000
+RETURN (lo)-[*1..3]-()
 ```
 
 ## PUT
