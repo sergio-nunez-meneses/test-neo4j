@@ -58,7 +58,7 @@ CREATE
   (o)-[:IS_TYPE_TAKEOVER]->(to),
   (to)-[:IS_LOCATED]->(lo),
   (to)-[:HAS_IMAGES]->(i),
-  (c)<-[:REFERS_TO]-(o)-[:REFERS_TO]->(tc)
+  (c)<-[:REFERS_TO]-(o)-[:REFERS_TO]->(tc);
 ```
 
 Create job offer:
@@ -102,8 +102,8 @@ CREATE (jo:JobOffer {
 CREATE
   (o)<-[:PUBLISHED_BY]-(u),
   (o)-[:IS_TYPE_JOB]->(jo),
-  (o)-[:BELONGS_TO]->(co),
-  (c)<-[:REFERS_TO]-(o)-[:REFERS_TO]->(tc)
+  (jo)-[:BELONGS_TO]->(co),
+  (c)<-[:REFERS_TO]-(o)-[:REFERS_TO]->(tc);
 ```
 
 Create estate offer:
@@ -162,7 +162,7 @@ CREATE
   (o)-[:IS_TYPE_ESTATE]->(eo),
   (eo)-[:IS_LOCATED]->(lo),
   (eo)-[:HAS_IMAGES]->(i),
-  (c)<-[:REFERS_TO]-(o)-[:REFERS_TO]->(tc)
+  (c)<-[:REFERS_TO]-(o)-[:REFERS_TO]->(tc);
 ```
 
 Create contact:
@@ -211,8 +211,7 @@ CREATE (co:Company {
 })
 // create relationship
 CREATE
-  (co)-[:IS_LOCATED]->(lo)
-RETURN co, lo
+  (co)-[:IS_LOCATED]->(lo);
 ```
 
 ## GET
@@ -351,13 +350,19 @@ RETURN (lo)-[*1..3]-()
 
 ## PUT
 
-Update any type of offer, e.g. job offer:
+Update offers by id:
 
 ```cypher
-MATCH (o:Offer {id: 1})-[]->(n)
-SET n += {
+MATCH path = (o:Offer {id: 1})-[]-(jo)
+SET o += {
+	title: string,
+  publishedDate: string,
+  endPublished: date(o.endPublished) + duration({months: 3}),
+  catchPhrase: string
+},
+jo += {
   townHall: string,
-  startingDate: string,
+  startingDate: date(jo.applicationDeadline) + duration({months: 6}),
   trade: string, // what does trade stand for?
   jobDescription: string,
   contractType: string,
@@ -366,17 +371,16 @@ SET n += {
   qualifications: string,
   skills: string,
   executive: boolean,
-  applicationDeadline: string
+  applicationDeadline: date(jo.applicationDeadline) + duration({months: 2})
 }
-RETURN o, n
+RETURN path
 ```
 
 ## DELETE
 
-Delete any type of offer, e.g. job offer:
+Delete nodes and its relationships by id:
 
 ```cypher
-// check hop numbers
-MATCH (o:Offer {id: 1})-[*1..5]->(offerDetails)
-DETACH DELETE o, offerDetails
+MATCH (n:Label {id: 1})
+DETACH DELETE n
 ```
