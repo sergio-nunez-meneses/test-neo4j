@@ -217,107 +217,129 @@ RETURN co, lo
 
 ## GET
 
-```cypher
-// return all nodes up to 2 hops away from Company, that have the indicated (<-) relationship
-MATCH (co:Company)<-[*1..2]-(n) RETURN co, n
-
-// return all nodes up to 2 hops away from Company, having a bi-directional relationship
-MATCH (co:Company)-[*1..2]-(n) RETURN co, n
-
-// return all nodes up to 1 hop away from Offer, having a bi-directional relationship
-MATCH (o:Offer)-[*1]-(n) RETURN o, n
-
-// return all nodes up to 1 hop away from Offer, if their publication ending date is lower than a given date
-MATCH (o:Offer)-[*1]-(n)
-WHERE date(o.endPublished) < date('YYYY-MM-dd')
-RETURN o, n
-```
-
-Find all offers and directly related nodes given the relationship direction:
+Find all offers their directly related nodes, based on the relationship direction:
 
 ```cypher
 // add Location, Images, Company and Company's Location nodes
-MATCH (o:Offer)-[]->(n)
-RETURN o, n
+MATCH (o:Offer)
+RETURN (o)-[]->()
 ```
 
-Find all takeover offers:
+Find all takeover offers and their locations:
 
 ```cypher
 // add Image node
-MATCH (o:Offer {type: 'takeover offer'})-[:IS_TYPE_TAKEOVER]->(to:TakeoverOffer)-[:IS_LOCATED]->(lo:Location)
-RETURN o, to, lo
+MATCH (o:Offer)
+RETURN (o)-[:IS_TYPE_TAKEOVER]->()--() // ()--() returns to related nodes
 ```
 
-Find all job offers:
+Find all job offers, companies and their locations:
 
 ```cypher
-// add Company and Company's Location node
-MATCH (o:Offer {type: 'job offer'})-[:IS_TYPE_JOB]->(jo:JobOffer)-[:IS_LOCATED]->(lo:Location)
-RETURN o, jo, lo
+MATCH (o:Offer)
+RETURN (o)-[:IS_TYPE_JOB]->()--()--()
 ```
 
 Find all estate offers:
 
 ```cypher
 // add Image node
-MATCH (o:Offer {type: 'estate offer'})-[:IS_TYPE_ESTATE]->(eo:EstateOffer)-[:IS_LOCATED]->(lo:Location)
-RETURN o, eo, lo
+MATCH (o:Offer)
+RETURN (o)-[:IS_TYPE_ESTATE]->()--() // ()--() returns all directly related nodes
 ```
 
 Find all offers by any property:
 
 ```cypher
+// return all directly related nodes
 MATCH (o:Offer {
   propertyName1: propertyValue1,
   propertyName2: propertyValue2
   // and so on
-})-[]->(n)-[:IS_LOCATED]->(lo:Location)
-RETURN o, n, lo
+})
+RETURN (o)-[]-()
+
+// or find by a set of keywords and return all directly related nodes 
+WITH ['sit', 'id', 'sed', 'id'] AS keywords
+UNWIND keywords AS keyword
+MATCH (o:Offer)
+WHERE o.title =~ ('.*\\b' + keyword + '\\b.*')
+RETURN (o)--()
+
+// or return the specified path
+WITH ['lorem', 'cursus', 'morbid', 'sit'] AS keywords
+UNWIND keywords AS keyword
+MATCH path = (o:Offer)-[:IS_TYPE_TAKEOVER|:IS_TYPE_JOB|:IS_TYPE_ESTATE]->(n)
+WHERE n.description =~ ('.*\\b' + keyword + '\\b.*')
+RETURN path
 ```
+
+Find all offers and their directly related nodes by company:
 
 ```cypher
-MATCH (o:Offer)-[]->(n {
-  propertyName1: propertyValue1,
-  propertyName2: propertyValue2
-  // and so on
-})-[:IS_LOCATED]->(lo:Location)
-RETURN o, n, lo
+MATCH path = (co:Company {name: 'Lorem ipsum'})-[]-()--()
+RETURN path
 ```
 
-Find all job offers by company:
-
-```cypher
-MATCH (lo:Location)<-[:IS_LOCATED]-(co:Company {
-  name: 'Doe Company'
-})<-[:BELONGS_TO]-(o:Offer)-[:IS_TYPE_JOB]->(jo:JobOffer)
-RETURN o, jo, co, lo
-```
-
-Find offer by id:
+Find offer and its directly related nodes by id:
 
 ```cypher
 // add Image node
-MATCH (o:Offer {id: 1})-[]->(n)-[:IS_LOCATED]->(lo:Location)
-RETURN o, to, lo
+MATCH path = (o:Offer {id: 1})--()
+RETURN path
 ```
 
-Find all type of offers by the distance between their location and a given point:
+Find all nodes by very specific constraints:
 
 ```cypher
+// return all nodes up to 2 hops away from Company, that have the indicated relationship (<)
+MATCH (co:Company)
+RETURN (co)<-[*1..2]-()
+
+// return all nodes up to 2 hops away from Company, having a bi-directional relationship
+MATCH (co:Company)
+RETURN (co)-[*1..2]-()
+
+// return all nodes that are 1 hop away from Offer, having a bi-directional relationship
+MATCH (o:Offer)
+RETURN (o)-[*1]-()
+
+// return all nodes that are 1 hop away from Offer, having a publication ending date lower than the given date
+WITH 'YYYY-mm-dd' as givenDate
+MATCH (o:Offer)
+WHERE date(o.publishedDate) < date(givenDate)
+RETURN (o:Offer)-[*1]-()
+
+// or
+MATCH (o:Offer)
+WHERE date(o.publishedDate) < date('YYYY-mm-dd')
+RETURN (o:Offer)-[*1]-()
+
+// return all nodes that are 1 hop away from Offer, having a publication ending date lower than 'n' days from a given date
+WITH 'YYYY-mm-dd' AS givenDate, 105 AS numberOfDays
+MATCH (o:Offer)
+WITH o, numberOfDays, duration.inDays(date(givenDate), date(o.endPublished)).days AS daysDifference
+WHERE daysDifference < numberOfDays
+RETURN 'The ' + o.type + ' entitled "' + o.title + '" will expire in ' + daysDifference + ' days.'
+
+// or, having a publication ending date lower than 'n' days from the current date
+MATCH (o:Offer)
+WHERE duration.inDays(date(), date(o.endPublished)).days < 110
+// display data as graph
+RETURN (o)-[*1]-()
+
+// return all offers by the distance between their location and a given point:
 // point() returns a 2D point in a CRS corresponding to the given values (WGS-84 or Cartesian)
 WITH point({longitude: -84.27831, latitude: -73.81575}) AS startingPoint
-MATCH (lo:Location)
+// target node is specified
+MATCH (lo:Location)-[*1..3]-(o:Offer)
 // distance() returns geodesic distance in meters
-WITH lo, round(distance(startingPoint, point({longitude: lo.longitude, latitude: lo.latitude}))) as distance
+WITH lo, o, toInteger(distance(startingPoint, point({longitude: lo.longitude, latitude: lo.latitude}))) as distance
 WHERE distance > 1000
-// RETURN lo.address, distance
-RETURN (lo)<-[*1..3]-()
-```
+// return data as table
+RETURN 'You are ' + distance + 'm away from offer "' + o.title + '", located at '  + lo.address + '.'
 
-Find all type of offers by the distance between their location and a given address:
-
-```cypher
+// return all nodes that are up to 3 hops away from Offer, by the distance between their location and a given address:
 // apoc.spatial.geocodeOnce() returns coordinates from a textual address
 CALL apoc.spatial.geocodeOnce('# address zipcode CITY COUNTRY')
 YIELD location AS job
