@@ -191,7 +191,7 @@ def format_nodes_and_infos(properties):
     node_infos = properties.pop()
     nodes = [create_nodes(node_infos['name'], i+1, node_infos['label'], properties[i]) for i in
              range(len(properties))]
-    node_names = ['({}{})'.format(node_infos['name'], i) for i in range(len(properties))]  # create list with node_infos
+    node_names = ['({}{})'.format(node_infos['name'], i+1) for i in range(len(properties))]  # create list with node_infos
     node_infos = dict(label=node_infos['label'].lower(), names=node_names)
     nodes.append(node_infos)  # restore node_infos
     return nodes
@@ -226,9 +226,9 @@ def create_relationships(*args):
     relationship = args[len(args) - 1]
 
     if relationship == 'REFERS_TO':
-        return '{}<-[:{}]-{}-[:{}]->{},\n'.format(args[2], relationship, args[0], relationship, args[1])
+        return '    {}<-[:{}]-{}-[:{}]->{},\n'.format(args[2], relationship, args[0], relationship, args[1])
     else:
-        return '{}-[:{}]->{},\n'.format(args[0], relationship, args[1])
+        return '    {}-[:{}]->{},\n'.format(args[0], relationship, args[1])
 
 
 def format_relationships(node_infos):
