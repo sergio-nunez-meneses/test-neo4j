@@ -19,4 +19,3 @@ exports.toLiteralMapFind = async function(reqKeys) {
 exports.toLiteralMapSet = async function(propKeys) {
 	return `n += ${JSON.stringify(propKeys).replace(/"([^"]+)":/g, '$1:')}`;
 };
-

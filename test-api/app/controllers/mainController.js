@@ -12,7 +12,7 @@ exports.createNode = ash(async function(req, res) {
 
 	if (node.records.length === 0) {
 		return res.status(500).send({
-			error: `An error occurred while creating ${label} node.`
+			error: `An error occurred while creating ${label} node.`,
 		});
 	}
 
@@ -21,7 +21,7 @@ exports.createNode = ash(async function(req, res) {
 	await session.close();
 
 	res.status(200).send({
-		message: `${label} node created successfully!`
+		message: `${label} node created successfully!`,
 	});
 });
 
@@ -41,7 +41,7 @@ exports.findAllNodes = ash(async function(req, res) {
 
 	if (result.records.length === 0) {
 		return res.status(500).send({
-			error: `An error occurred while retrieving ${label} nodes. Maybe ${label} nodes were not found.`
+			error: `An error occurred while retrieving ${label} nodes. Maybe ${label} nodes were not found.`,
 		});
 	}
 
@@ -68,7 +68,7 @@ exports.findOneNode = ash(async function(req, res) {
 
 	if (node.records.length === 0) {
 		return res.status(500).send({
-			error: `Error retrieving ${label} node with id=${req.params.id}. Maybe ${label} node was not found.`
+			error: `Error retrieving ${label} node with id=${req.params.id}. Maybe ${label} node was not found.`,
 		});
 	}
 
@@ -91,7 +91,7 @@ exports.updateNode = ash(async function(req, res) {
 
 	if (node.records.length === 0) {
 		return res.status(500).send({
-			error: `Error updating ${label} node with id=${req.params.id}.`
+			error: `Error updating ${label} node with id=${req.params.id}.`,
 		});
 	}
 
@@ -100,7 +100,7 @@ exports.updateNode = ash(async function(req, res) {
 	await session.close();
 
 	res.status(200).send({
-		message: `${label} node updated successfully!`
+		message: `${label} node updated successfully!`,
 	});
 });
 
@@ -111,7 +111,7 @@ exports.deleteAllNodes = ash(async function(req, res) {
 
 	if (node.records.length === 0) {
 		return res.status(500).send({
-			error: `An error occurred while removing all ${label} nodes. Maybe ${label} nodes were not found.`
+			error: `An error occurred while removing all ${label} nodes. Maybe ${label} nodes were not found.`,
 		});
 	}
 
@@ -120,7 +120,7 @@ exports.deleteAllNodes = ash(async function(req, res) {
 	await session.close();
 
 	res.status(200).send({
-		message: `${node.records.length} ${label} nodes deleted successfully!`
+		message: `${node.records.length} ${label} nodes deleted successfully!`,
 	});
 });
 
@@ -134,7 +134,7 @@ exports.deleteNode = ash(async function(req, res) {
 
 	if (node.records.length === 0) {
 		return res.status(500).send({
-			error: `Couldn't delete ${label} node with id=${req.params.id}.`
+			error: `Couldn't delete ${label} node with id=${req.params.id}.`,
 		});
 	}
 
@@ -143,6 +143,6 @@ exports.deleteNode = ash(async function(req, res) {
 	await session.close();
 
 	res.status(200).send({
-		message: `${label} node deleted successfully!`
+		message: `${label} node deleted successfully!`,
 	});
 });

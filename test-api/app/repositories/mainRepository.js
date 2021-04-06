@@ -35,7 +35,8 @@ exports.delete = ash(async function() {
 		const cypher = `MATCH (n:${arguments[1]} ${where}) DETACH DELETE n RETURN n`;
 
 		return await arguments[0].run(cypher, arguments[2]);
-	} else {
+	}
+	else {
 		const cypher = `MATCH (n:${arguments[1]}) DETACH DELETE n RETURN n`;
 
 		return await arguments[0].run(cypher);

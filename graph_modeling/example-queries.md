@@ -237,6 +237,10 @@ Find all job offers, companies and their locations:
 ```cypher
 MATCH (o:Offer)
 RETURN (o)-[:IS_TYPE_JOB]->()--()--()
+
+// or
+MATCH path = (o:Offer {type: 'job offer'})-[*1..3]-()
+RETURN path
 ```
 
 Find all estate offers:
@@ -354,8 +358,9 @@ Update offers by id:
 
 ```cypher
 MATCH path = (o:Offer {id: 1})-[]-(jo)
-SET o += {
-	title: string,
+SET
+o += {
+  title: string,
   publishedDate: string,
   endPublished: date(o.endPublished) + duration({months: 3}),
   catchPhrase: string
