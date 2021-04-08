@@ -1,5 +1,5 @@
 {
-	"name": "test-api",
+	"name": "node-js",
 	"version": "1.0.0",
 	"description": "test graph api",
 	"main": "server.js",
