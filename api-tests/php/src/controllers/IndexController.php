@@ -39,6 +39,19 @@ class IndexController {
 				}
 				break;
 
+			case 'POST':
+				return $node->create($_POST);
+				break;
+
+			case 'PUT':
+				parse_str(file_get_contents('php://input'), $output);
+				return $node->update($node_data['id'], $output);
+				break;
+
+			case 'DELETE':
+				return $node->delete($node_data['id']);
+				break;
+
 			default:
 				return null;
 				break;
