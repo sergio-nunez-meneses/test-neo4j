@@ -2,13 +2,7 @@
 
 class IndexController {
 
-	public static function filter_request($url) {
-		if ($url['path'] !== '/') {
-			return true;
-		}
-	}
-
-	public static function route_request($url, $request_method) {
+	public static function request_router($url, $request_method) {
 		$url = parse_url($url);
 
 		if (!self::filter_request($url)) {
@@ -16,8 +10,45 @@ class IndexController {
 			return;
 		}
 
-		$node = self::set_node_data_from_url($url);
-		echo self::response(200, $node);
+		$node_data = self::set_node_data_from_url($url);
+		// echo self::response(200, $node_data);
+		$response = self::model_router($node_data, $request_method);
+
+		if ($response === null) {
+			echo self::response(404, 'Not found');
+		}
+
+		echo self::response(200, $response);
+	}
+
+	public static function model_router($node_data, $request_method) {
+		$node_label = ucfirst($node_data['label']) . 'Model';
+		$node = new $node_label();
+		$response = null;
+
+		switch ($request_method) {
+			case 'GET':
+				if (isset($node_data['id'])) {
+					return $node->find_one($node_data['id']);
+				}
+				elseif (isset($node_data['properties'])) {
+					return $node->find_all($node_data['properties']);
+				}
+				else {
+					return $node->find_all();
+				}
+				break;
+
+			default:
+				return null;
+				break;
+		}
+	}
+
+	public static function filter_request($url) {
+		if ($url['path'] !== '/') {
+			return true;
+		}
 	}
 
 	public static function set_node_data_from_url($url) {
