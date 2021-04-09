@@ -1,12 +1,12 @@
 <?php
 
-function str_contains($str, $needle) {
-	if (strpos($str, $needle) !== false) {
-		return true;
-	}
-
-	return false;
-}
+// function str_contains($str, $needle) {
+// 	if (strpos($str, $needle) !== false) {
+// 		return true;
+// 	}
+//
+// 	return false;
+// }
 
 function dump_beautified($data) {
 	echo '<pre>';
