@@ -5,24 +5,24 @@ require 'config/neo4j_credentials.php';
 require 'vendor/autoload.php';
 require 'tools/functions.php';
 
-// use src\controllers\IndexController;
-//
-// IndexController::request_router($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+use App\Controllers\IndexController;
+
+IndexController::request_router($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 
 // WORKING
-use Laudis\Neo4j\ClientBuilder;
-
-$client = ClientBuilder::create()
-		->addHttpConnection('backup', 'http://' . USERNAME . ':' . PASSWORD . '@localhost:7474')
-		->addBoltConnection('default', 'bolt://' . USERNAME . ':' . PASSWORD . '@localhost:7687')
-		->setDefaultConnection('backup')
-		->build();
-
-dump_beautified($client);
-
-$result = $client->run('MATCH (o:Offer) RETURN (o)-[:IS_TYPE_TAKEOVER]->()--()');
-
-dump_beautified($result);
+// use Laudis\Neo4j\ClientBuilder;
+//
+// $client = ClientBuilder::create()
+// 		->addHttpConnection('backup', 'http://' . USERNAME . ':' . PASSWORD . '@localhost:7474')
+// 		->addBoltConnection('default', 'bolt://' . USERNAME . ':' . PASSWORD . '@localhost:7687')
+// 		->setDefaultConnection('backup')
+// 		->build();
+//
+// dump_beautified($client);
+//
+// $result = $client->run('MATCH (o:Offer) RETURN (o)-[:IS_TYPE_TAKEOVER]->()--()');
+//
+// dump_beautified($result);
 
 // use GraphAware\Neo4j\Client\ClientBuilder;
 //
