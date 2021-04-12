@@ -1,34 +1,35 @@
 <?php
 
-require 'includes/class_autoloader.php';
+// require 'includes/class_autoloader.php';
 require 'config/neo4j_credentials.php';
 require 'vendor/autoload.php';
 require 'tools/functions.php';
 
-IndexController::request_router($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
+// use src\controllers\IndexController;
+//
+// IndexController::request_router($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 
-// use Laudis\Neo4j\ClientBuilder;
-// use Laudis\Neo4j\Databags\Statement;
-//
-// $client = ClientBuilder::create()
-// 		->addHttpConnection('backup', 'http://' . USERNAME . ':' . PASSWORD . '@test')
-// 		->addBoltConnection('default', 'bolt://' . USERNAME . ':' . PASSWORD . '@test')
-// 		->setDefaultConnection('backup')
-// 		->build();
-//
-// dump_beautified($client);
-//
-// $statement = new Statement("MATCH (o:Offer {type: 'joboffers'}) RETURN o", []);
-// $result = $client->runStatement($statement, 'backup');
-//
-// dump_beautified($result);
+// WORKING
+use Laudis\Neo4j\ClientBuilder;
+
+$client = ClientBuilder::create()
+		->addHttpConnection('backup', 'http://' . USERNAME . ':' . PASSWORD . '@localhost:7474')
+		->addBoltConnection('default', 'bolt://' . USERNAME . ':' . PASSWORD . '@localhost:7687')
+		->setDefaultConnection('backup')
+		->build();
+
+dump_beautified($client);
+
+$result = $client->run('MATCH (o:Offer) RETURN (o)-[:IS_TYPE_TAKEOVER]->()--()');
+
+dump_beautified($result);
 
 // use GraphAware\Neo4j\Client\ClientBuilder;
 //
 // $client = ClientBuilder::create()
 //     ->addConnection('default', 'http://' . USERNAME . ':' . PASSWORD . '@test')
 //     ->addConnection('bolt', 'bolt://' . USERNAME . ':' . PASSWORD . '@test')
-// 		->setDefaultTimeout(100)
+// 		->setDefaultTimeout(1000000)
 //     ->build();
 //
 // $query = "MATCH (o:Offer) RETURN o";

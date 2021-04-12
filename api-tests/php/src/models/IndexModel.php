@@ -21,7 +21,7 @@ class IndexModel extends MainModel
             return "Returned all $label records with query parameters ".json_encode($data);
         }
 
-        $cypher = "MATCH (o:$label) RETURN o";
+        $cypher = "MATCH (n:$label) RETURN n";
 
         return $this->run_query($cypher);
 

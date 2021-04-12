@@ -14,7 +14,6 @@ class IndexController
         }
 
         $node_data = self::set_node_data_from_url($url);
-        // echo self::response(200, $node_data);
         $response = self::model_router($node_data, $request_method);
 
         if ($response === null) {
@@ -26,7 +25,6 @@ class IndexController
 
     public static function model_router($node_data, $request_method)
     {
-        // $node_label = ucfirst($node_data['label']).'Model';
         $node = new IndexModel();
         $response = null;
 
@@ -72,7 +70,8 @@ class IndexController
         if (isset($url_path[2]) && $url_path[2] !== '') {
             $node_data['label'] = self::format_label($url_path[1]);
             $node_data['id'] = (int)$url_path[2];
-        } else {
+        }
+        else {
             $node_data['label'] = self::format_label($url_path[1]);
         }
 
@@ -86,7 +85,17 @@ class IndexController
 
     public static function format_label($label)
     {
-        return ucfirst(substr($label, 0, -1));
+        if ($label === 'companies') {
+            return endpoint_substr($label, -3, 'y');
+        }
+        elseif (string_contains($label, 'territorial')) {
+            return endpoint_explode($label, 'contacts', 'Contact');
+        }
+        elseif (string_contains($label, 'offers') && get_str_pos($label, 'offers') !== null) {
+            return endpoint_explode($label, 'offers', 'Offer');
+        }
+
+        return endpoint_substr($label, -1);
     }
 
     public static function response($status_code, $data)
