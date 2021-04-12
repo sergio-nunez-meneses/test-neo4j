@@ -352,6 +352,12 @@ WHERE distance < 4000
 RETURN (lo)-[*1..3]-()
 ```
 
+Optimizations:
+
+```cypher
+MATCH (o)-[:IS_OF_TYPE]->(t:Type {type: 'job'}) RETURN o
+```
+
 ## PUT
 
 Update offers by id:
