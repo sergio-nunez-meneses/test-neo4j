@@ -26,18 +26,20 @@ class IndexController
 
     public static function model_router($node_data, $request_method)
     {
-        $node_label = ucfirst($node_data['label']).'Model';
-        $node = new $node_label();
+        // $node_label = ucfirst($node_data['label']).'Model';
+        $node = new IndexModel();
         $response = null;
 
         switch ($request_method) {
             case 'GET':
                 if (isset($node_data['id'])) {
-                    return $node->find_one($node_data['id']);
-                } elseif (isset($node_data['properties'])) {
-                    return $node->find_all($node_data['properties']);
-                } else {
-                    return $node->find_all();
+                    return $node->find_one($node_data['label'], $node_data['id']);
+                }
+                elseif (isset($node_data['properties'])) {
+                    return $node->find_all($node_data['label'], $node_data['properties']);
+                }
+                else {
+                    return $node->find_all($node_data['label']);
                 }
 
             case 'POST':
@@ -84,7 +86,7 @@ class IndexController
 
     public static function format_label($label)
     {
-        return substr($label, 0, -1);
+        return ucfirst(substr($label, 0, -1));
     }
 
     public static function response($status_code, $data)

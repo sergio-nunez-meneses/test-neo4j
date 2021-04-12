@@ -1,7 +1,7 @@
 <?php
 
 
-class OfferModel extends MainModel
+class IndexModel extends MainModel
 {
 
     public function create($properties)
@@ -12,24 +12,27 @@ class OfferModel extends MainModel
     public function find_all()
     {
         $num_args = func_num_args();
+        $args = func_get_args();
+        $label = filter_var($args[0], FILTER_SANITIZE_STRING);
 
-        if ($num_args > 0) {
-            $data = func_get_arg(0);
+        if ($num_args > 1) {
+        	  $data = $args[1];
 
-            return 'Returned all records with query parameters '.json_encode($data);
+            return "Returned all $label records with query parameters ".json_encode($data);
         }
 
-        $cypher = "MATCH (o:Offer) RETURN o";
+        $cypher = "MATCH (o:$label) RETURN o";
 
         return $this->run_query($cypher);
 
         // return 'Returned all records';
     }
 
-    public function find_one($id)
+    public function find_one($label, $id)
     {
         $filtered_id = filter_var($id, FILTER_SANITIZE_STRING);
-        $cypher = "MATCH (o:Offer) WHERE o.id = $filtered_id RETURN o";
+        $filtered_label = filter_var($label, FILTER_SANITIZE_STRING);
+        $cypher = "MATCH (o:$filtered_label) WHERE o.id = $filtered_id RETURN o";
 
         return $this->run_query($cypher);
 
