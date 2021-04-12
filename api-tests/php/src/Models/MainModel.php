@@ -12,16 +12,19 @@ class MainModel
         return ClientBuilder::create()
             ->addHttpConnection('backup', 'http://' . USERNAME . ':' . PASSWORD . '@localhost:7474')
             ->addBoltConnection('default', 'bolt://' . USERNAME . ':' . PASSWORD . '@localhost:7687')
-            ->setDefaultConnection('backup')
+            ->setDefaultConnection('default')
             ->build();
     }
 
-    protected function run_query($cypher, $properties = [])
+    protected function run_query($cypher, $parameters = [])
     {
         $db = $this->connection();
 
-        if (empty($properties)) {
+        if (empty($parameters)) {
             return $db->run($cypher);
+        }
+        else {
+            return $db->run($cypher, $parameters, 'default');
         }
     }
 }

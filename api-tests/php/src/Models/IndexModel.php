@@ -14,12 +14,16 @@ class IndexModel extends MainModel
     {
         $num_args = func_num_args();
         $args = func_get_args();
-        $label = filter_var($args[0], FILTER_SANITIZE_STRING);
+        $label = $args[0];
 
         if ($num_args > 1) {
-        	  $data = $args[1];
+            $query_parameters = $args[1];
+            $parameters = $args[2];
+            $cypher = "MATCH (n:$label $query_parameters) RETURN n";
 
-            return "Returned all $label records with query parameters ".json_encode($data);
+            return $this->run_query($cypher, $parameters);
+
+            // return "Returned all $label records with query parameters ".json_encode($data);
         }
 
         $cypher = "MATCH (n:$label) RETURN n";
@@ -31,9 +35,7 @@ class IndexModel extends MainModel
 
     public function find_one($label, $id)
     {
-        $filtered_id = filter_var($id, FILTER_SANITIZE_STRING);
-        $filtered_label = filter_var($label, FILTER_SANITIZE_STRING);
-        $cypher = "MATCH (o:$filtered_label) WHERE o.id = $filtered_id RETURN o";
+        $cypher = "MATCH (n:$label {id: $id}) RETURN n";
 
         return $this->run_query($cypher);
 

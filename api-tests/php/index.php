@@ -1,6 +1,5 @@
 <?php
 
-// require 'includes/class_autoloader.php';
 require 'config/neo4j_credentials.php';
 require 'vendor/autoload.php';
 require 'tools/functions.php';

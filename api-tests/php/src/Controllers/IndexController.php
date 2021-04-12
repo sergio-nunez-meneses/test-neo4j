@@ -27,7 +27,7 @@ class IndexController
         echo self::response(200, $response);
     }
 
-    public static function model_router($node_data, $request_method)
+    private static function model_router($node_data, $request_method)
     {
         $node = new IndexModel();
         $response = null;
@@ -37,8 +37,8 @@ class IndexController
                 if (isset($node_data['id'])) {
                     return $node->find_one($node_data['label'], $node_data['id']);
                 }
-                elseif (isset($node_data['properties'])) {
-                    return $node->find_all($node_data['label'], $node_data['properties']);
+                elseif (isset($node_data['query_parameters']) && isset($node_data['parameters'])) {
+                    return $node->find_all($node_data['label'], $node_data['query_parameters'], $node_data['parameters']);
                 }
                 else {
                     return $node->find_all($node_data['label']);
@@ -59,35 +59,41 @@ class IndexController
         }
     }
 
-    public static function filter_request($url)
-    {
-        if ($url['path'] !== '/') {
-            return true;
-        }
-    }
-
-    public static function set_node_data_from_url($url)
+    private static function set_node_data_from_url($url)
     {
         $url_path = explode('/', $url['path']);
         $node_data = [];
+        $node_data['label'] = filter_var(self::format_label($url_path[1]), FILTER_SANITIZE_STRING);
 
-        if (isset($url_path[2]) && $url_path[2] !== '') {
-            $node_data['label'] = self::format_label($url_path[1]);
+        if (isset($url_path[2]) && !empty($url_path[2])) {
             $node_data['id'] = (int)$url_path[2];
-        }
-        else {
-            $node_data['label'] = self::format_label($url_path[1]);
         }
 
         if (isset($url['query'])) {
             parse_str($url['query'], $parameters);
-            $node_data['properties'] = $parameters;
+
+            if (array_key_exists('id', $parameters)) {
+                $parameters['id'] = (int)$parameters['id'];
+            }
+
+            $node_data['query_parameters'] = self::format_parameters($parameters);
+            $node_data['parameters'] = $parameters;
         }
 
         return $node_data;
     }
 
-    public static function format_label($label)
+    private static function format_parameters($parameters) {
+        $literal_map = [];
+
+        foreach ($parameters as $key => $value) {
+            $literal_map[$key] = "$$key";
+        }
+
+        return preg_replace('/[\'"]+/','', json_encode($literal_map));
+    }
+
+    private static function format_label($label)
     {
         if ($label === 'companies') {
             return endpoint_substr($label, -3, 'y');
@@ -102,7 +108,14 @@ class IndexController
         return endpoint_substr($label, -1);
     }
 
-    public static function response($status_code, $data)
+    private static function filter_request($url)
+    {
+        if ($url['path'] !== '/') {
+            return true;
+        }
+    }
+
+    private static function response($status_code, $data)
     {
         return json_encode(
             [
