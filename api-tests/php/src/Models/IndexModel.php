@@ -5,9 +5,13 @@ namespace App\Models;
 class IndexModel extends MainModel
 {
 
-    public function create($properties)
+    public function create($label, $query_parameters, $parameters)
     {
-        return 'Created record with properties '.json_encode($properties);
+        $cypher = "CREATE (n:$label $query_parameters) RETURN n";
+
+        return $this->run_query($cypher, $parameters);
+
+        // return 'Created record with properties '.json_encode($properties);
     }
 
     public function find_all()
@@ -45,7 +49,6 @@ class IndexModel extends MainModel
     public function update($label, $id, $parameters)
     {
         $cypher = "MATCH (n:$label {id: $id}) SET $parameters RETURN n";
-        dump_beautified($cypher);
 
         return $this->run_query($cypher);
 

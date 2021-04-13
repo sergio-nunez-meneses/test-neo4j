@@ -45,7 +45,8 @@ class IndexController
                 }
 
             case 'POST':
-                return $node->create($_POST);
+                $query_parameters = self::format_query_parameters($_POST);
+                return $node->create($node_data['label'], $query_parameters, $_POST);
 
             case 'PUT':
                 parse_str(file_get_contents('php://input'), $output);
