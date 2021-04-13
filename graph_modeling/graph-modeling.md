@@ -1,19 +1,3 @@
-# Scenario
-
-A User <u>_publishes_</u> an Offer.<br>
-An Offer is <u>_published by_</u> a User.
-
-A Contact or a Territorial Contact, <u>_are referents for_</u> an Offer.<br>
-An Offer <u>_refers to_</u> a Contact and a Territorial Contact.
-
-A Company <u>_has a Job Offer_</u>.<br>
-A Job Offer <u>_belongs to a Company_</u>.
-
-An Offer is either a <u>_Job offer_</u>, a <u>_Takeover offer_</u>, or an <u>_Estate offer_</u>.<br>
-A Job, Takeover or Estate offers <u>_belong to an Offer_</u>.
-
-A Takeover or Estate offers, or a Company, <u>_are located_</u> somewhere.<br>
-
 # Labels
 
 - User
@@ -21,21 +5,42 @@ A Takeover or Estate offers, or a Company, <u>_are located_</u> somewhere.<br>
 - TerritorialContact
 - Company
 - Offer
-  - JobOffer
-  - RealEstateOffer
-  - TakeoverOffer
+- Type
+- OfferDetail
 - Location
+- Image
+
+# Scenario
+
+An Offer is <u>_published by_</u> a User.<br>
+An Offer <u>_refers to_</u> a Contact, and a Territorial Contact.<br>
+An Offer <u>_is of type_</u> takeover, job, or estate.<br>
+An Offer <u>_has details_</u>.
+
+If an Offer <u>_is of type_</u> takeover or estate, Offer Detail <u>_is located_</u> somewhere and _has media_.<br>
+If an Offer <u>_is of type_</u> job, Offer Detal <u>_belongs to_</u> a Company.
+
+A Company <u>_is located_</u> somewhere.
 
 # Relationships
 
-- PUBLISHES
 - PUBLISHED_BY
-- IS_REFERENT_FOR
 - REFERS_TO
-- HAS_JOB_OFFER
-- BELONGS_TO_COMPANY
-- IS_JOB_OFFER
-- IS_ESTATE_OFFER
-- IS_TAKEOVER_OFFER
-- BELONGS_TO_OFFER
-- IS_LOCATED_AT
+- BELONGS_TO
+- IS_OF_TYPE
+- IS_LOCATED
+- HAS_MEDIA
+
+```cypher
+CREATE
+    (o:Offer)-[:PUBLISHED_BY]->(u:User)
+    (c:Contact)<-[:REFERS_TO]-(o:Offer)-[:REFERS_TO]->(tc:TerritorialContact)
+    (o:Offer)-[:IS_OF_TYPE]->(t:Type)
+    (o:Offer)-[:HAS_DETAILS]->(od:OfferDetail) // must be confirmed
+    // if type takeover or estate
+    (o:Offer)-[:IS_LOCATED]->(l:Location)
+    (o:Offer)-[:HAS_MEDIA]->(i:Image)
+    // if type job
+    (o:Offer)-[:BELONGS_TO]->(co:Company)
+    (co:Company)-[:IS_LOCATED]->(l:Location);
+```

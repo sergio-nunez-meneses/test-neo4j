@@ -116,7 +116,7 @@ MATCH (c:Contact {
   firstname: string
 })
 MATCH (tc:TerritorialContact {
-firstname: string
+  firstname: string
 })
 CREATE (o:Offer {
   id: integer,
@@ -216,7 +216,7 @@ CREATE
 
 ## GET
 
-Find all offers their directly related nodes, based on the relationship direction:
+Find all offers and their directly related nodes, based on the relationship direction:
 
 ```cypher
 // add Location, Images, Company and Company's Location nodes
@@ -352,10 +352,20 @@ WHERE distance < 4000
 RETURN (lo)-[*1..3]-()
 ```
 
-Optimizations:
+# GET Optimizations
+
+Find all offers, and their strictly related nodes:
 
 ```cypher
-MATCH (o)-[:IS_OF_TYPE]->(t:Type {type: 'job'}) RETURN o
+MATCH (o:Offer) RETURN (o)--()
+```
+
+Find all offers by type:
+
+```cypher
+MATCH (o)-[:IS_OF_TYPE]->(t:Type {type: 'takeover'}) RETURN o;
+// or
+MATCH (t:Type {type: 'takeover'})<-[]-(o) RETURN o;
 ```
 
 ## PUT
