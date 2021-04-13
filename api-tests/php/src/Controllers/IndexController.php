@@ -49,7 +49,7 @@ class IndexController
 
             case 'PUT':
                 parse_str(file_get_contents('php://input'), $output);
-                return $node->update($node_data['id'], $output);
+                return $node->update($node_data['label'], $node_data['id'], self::format_body_parameters($output));
 
             case 'DELETE':
                 return $node->delete($node_data['id']);
@@ -63,7 +63,7 @@ class IndexController
     {
         $url_path = explode('/', $url['path']);
         $node_data = [];
-        $node_data['label'] = filter_var(self::format_label($url_path[1]), FILTER_SANITIZE_STRING);
+        $node_data['label'] = filter_var(self::format_node_label($url_path[1]), FILTER_SANITIZE_STRING);
 
         if (isset($url_path[2]) && !empty($url_path[2])) {
             $node_data['id'] = (int)$url_path[2];
@@ -76,14 +76,14 @@ class IndexController
                 $parameters['id'] = (int)$parameters['id'];
             }
 
-            $node_data['query_parameters'] = self::format_parameters($parameters);
+            $node_data['query_parameters'] = self::format_query_parameters($parameters);
             $node_data['parameters'] = $parameters;
         }
 
         return $node_data;
     }
 
-    private static function format_parameters($parameters) {
+    private static function format_query_parameters($parameters) {
         $literal_map = [];
 
         foreach ($parameters as $key => $value) {
@@ -93,7 +93,11 @@ class IndexController
         return preg_replace('/[\'"]+/','', json_encode($literal_map));
     }
 
-    private static function format_label($label)
+    private static function format_body_parameters($parameters) {
+        return 'n += ' . preg_replace('/"([^"]+)":/', '$1:', json_encode($parameters));
+    }
+
+    private static function format_node_label($label)
     {
         if ($label === 'companies') {
             return endpoint_substr($label, -3, 'y');

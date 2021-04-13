@@ -42,9 +42,14 @@ class IndexModel extends MainModel
         // return "Returned record with id $id";
     }
 
-    public function update($id, $data)
+    public function update($label, $id, $parameters)
     {
-        return "Updated record #$id with data ".json_encode($data);
+        $cypher = "MATCH (n:$label {id: $id}) SET $parameters RETURN n";
+        dump_beautified($cypher);
+
+        return $this->run_query($cypher);
+
+        // return "Updated record #$id with data ".$data;
     }
 
     public function delete($id)
