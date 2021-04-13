@@ -10,8 +10,6 @@ class IndexModel extends MainModel
         $cypher = "CREATE (n:$label $query_parameters) RETURN n";
 
         return $this->run_query($cypher, $parameters);
-
-        // return 'Created record with properties '.json_encode($properties);
     }
 
     public function find_all()
@@ -26,15 +24,11 @@ class IndexModel extends MainModel
             $cypher = "MATCH (n:$label $query_parameters) RETURN n";
 
             return $this->run_query($cypher, $parameters);
-
-            // return "Returned all $label records with query parameters ".json_encode($data);
         }
 
         $cypher = "MATCH (n:$label) RETURN n";
 
         return $this->run_query($cypher);
-
-        // return 'Returned all records';
     }
 
     public function find_one($label, $id)
@@ -42,8 +36,6 @@ class IndexModel extends MainModel
         $cypher = "MATCH (n:$label {id: $id}) RETURN n";
 
         return $this->run_query($cypher);
-
-        // return "Returned record with id $id";
     }
 
     public function update($label, $id, $parameters)
@@ -51,8 +43,6 @@ class IndexModel extends MainModel
         $cypher = "MATCH (n:$label {id: $id}) SET $parameters RETURN n";
 
         return $this->run_query($cypher);
-
-        // return "Updated record #$id with data ".$data;
     }
 
     public function delete($label, $id)
@@ -60,7 +50,5 @@ class IndexModel extends MainModel
         $cypher = "MATCH (n:$label {id: $id}) DETACH DELETE n RETURN n";
 
         return $this->run_query($cypher);
-
-        // return "Deleted record #$id";
     }
 }
