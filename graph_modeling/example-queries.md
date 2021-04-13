@@ -214,6 +214,17 @@ CREATE
   (co)-[:IS_LOCATED]->(lo);
 ```
 
+## POST Optimizations
+
+Create Offer, Type, and relationship in between:
+
+```cypher
+MERGE (t:Type {type: 'job'})
+WITH t
+CREATE (o:Offer {title: 'Lorem ipsum'})
+CREATE (o)-[:IS_OF_TYPE]->(t);
+```
+
 ## GET
 
 Find all offers and their directly related nodes, based on the relationship direction:
@@ -352,7 +363,7 @@ WHERE distance < 4000
 RETURN (lo)-[*1..3]-()
 ```
 
-# GET Optimizations
+## GET Optimizations
 
 Find all offers, and their strictly related nodes:
 
@@ -363,9 +374,19 @@ MATCH (o:Offer) RETURN (o)--()
 Find all offers by type:
 
 ```cypher
-MATCH (o)-[:IS_OF_TYPE]->(t:Type {type: 'takeover'}) RETURN o;
+MATCH (o)-[:IS_OF_TYPE]->(t:Type {type: 'takeover'}) RETURN o
+
 // or
-MATCH (t:Type {type: 'takeover'})<-[]-(o) RETURN o;
+MATCH (t:Type {type: 'takeover'})<-[]-(o) RETURN o
+```
+
+Find offer by id:
+
+```cypher
+WITH 1 AS nodeIdentity
+MATCH (o:Offer)
+WHERE ID(o) = nodeIdentity
+RETURN o {id:id(o), properties: properties(o)} // using map projection
 ```
 
 ## PUT
