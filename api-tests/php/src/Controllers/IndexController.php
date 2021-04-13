@@ -53,7 +53,7 @@ class IndexController
                 return $node->update($node_data['label'], $node_data['id'], self::format_body_parameters($output));
 
             case 'DELETE':
-                return $node->delete($node_data['id']);
+                return $node->delete($node_data['label'], $node_data['id']);
 
             default:
                 return null;

@@ -55,8 +55,12 @@ class IndexModel extends MainModel
         // return "Updated record #$id with data ".$data;
     }
 
-    public function delete($id)
+    public function delete($label, $id)
     {
-        return "Deleted record #$id";
+        $cypher = "MATCH (n:$label {id: $id}) DETACH DELETE n RETURN n";
+
+        return $this->run_query($cypher);
+
+        // return "Deleted record #$id";
     }
 }
